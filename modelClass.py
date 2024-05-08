@@ -9,4 +9,6 @@ import tensorflow.data as data
 
 class Model:
 	def __init__(self):
-		...
+		self.model = tf.keras.Sequential()
+
+		self.model.add(layers.Flatten())
