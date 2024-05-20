@@ -11,7 +11,7 @@ def main():
 	positions = os.listdir("./positionData")
 	readPositions = []
 	for excel in positions:
-		if pos in excel:
+		if pos in excel and year in excel:
 			currPos = pd.read_excel(f"./positionData/{excel}")
 			readPositions.append(currPos)
 	
@@ -23,29 +23,45 @@ def main():
 	with open("./teams.json", 'r') as teamJSON:
 			teamKeys = json.load(teamJSON)
 
-	allPlayers = {}
-
 	combinedDataLst = combinedData.values.tolist()
 	combinedDataLst = combinedDataLst[1:]
-	for i in range(1, len(combinedDataLst) // 200):
-		print(combinedDataLst[i*200])
-		combinedDataLst.pop(i*200)
-		print(combinedDataLst[i*200])
+	for i in range(1, len(combinedDataLst)-1):
+		try:
+			if combinedDataLst[i][0] == 'Rk':
+				print(f"\n + {i}")
+				print(combinedDataLst[i-1])
+				print(combinedDataLst[i])
+				print(combinedDataLst[i+1])
+				combinedDataLst.pop(i)
+		except IndexError:
+			pass
+	
+	try:
+		f = open("playerDict.json", "r")
+		try:
+			allPlayers = json.load(f)
+		except json.decoder.JSONDecodeError:
+			allPlayers = {}
+	except FileNotFoundError:
+		allPlayers = {}
+		f = open("playerDict.json", "w")
 
 	for i in range(len(combinedDataLst)):
+		playerName = combinedDataLst[i][1]
 		playerDict = {}
-		print(i)
-		print(combinedDataLst[i])
 		teamName = combinedDataLst[i][9]
 		oppName = combinedDataLst[i][11]
-		fullScore = combinedDataLst[i][11]
+		fullScore = combinedDataLst[i][12]
 		hyphen = fullScore.find("-")
+		# week = ((int(year)-2020) * 17) + combinedDataLst[i][6]
 		playerDict.update({
+			# "week": None,
+			"season": year,
 			"week": combinedDataLst[i][6],
 			"team": teamKeys[teamName],
 			"opp": teamKeys[oppName],
 			"teamScore": fullScore[2:hyphen],
-			"oppScore": fullScore[hyphen:],
+			"oppScore": fullScore[hyphen+1:],
 			"cmpPass": combinedDataLst[i][13],
 			"att": combinedDataLst[i][14],
 			"inc": combinedDataLst[i][15],
@@ -66,9 +82,22 @@ def main():
 			"yC": combinedDataLst[i][30],
 			"succPerc": combinedDataLst[i][31]
 		})
-		allPlayers.update({combinedDataLst[i][1]: playerDict})
-	with open("./playerDict.json", "w") as f:
-		json.dump(allPlayers, f)
+		try:
+			newPlayerDict = allPlayers[playerName]
+			# print(newPlayerDict)
+			# lastWk = newPlayerDict[len(newPlayerDict)-1]["week"]
+			# print(lastWk, combinedDataLst[i][6], lastWk + combinedDataLst[i][6])
+			# playerDict.update({"week": lastWk + 1})
+			newPlayerDict.append(playerDict)
+			allPlayers.update({playerName: newPlayerDict})
+		except KeyError:
+			# playerDict.update({"week": combinedDataLst[i][6]})
+			allPlayers.update({playerName: [playerDict]})
+			
+	f.close()
+	f = open("playerDict.json", "w")
+	json.dump(allPlayers, f, indent=2)
+	f.close()
 
 
 
