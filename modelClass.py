@@ -6,6 +6,8 @@ import tensorflow.keras.optimizers as optimizers
 import tensorflow.keras.losses as losses
 from tensorflow.train import Checkpoint
 import tensorflow.data as data
+import os
+import datetime
 
 def saveStuff(model, save_path, plotHistoryPath, history):
 	print(f"Saving model to {save_path}")
@@ -43,8 +45,7 @@ class Model:
 
 		self.model.add(layers.Dense(340, activation=activations.relu))
 
-		self.optimizer = optimizers.Adam(learning_rate=self.lr_scheduler)
-		# self.optimizer = optimizers.Adam(learning_rate=0.00001)
+		self.optimizer = optimizers.Adam(learning_rate=0.00001)
 		self.loss = losses.CategoricalCrossentropy()
 		self.model.compile(
 			loss = self.loss,
@@ -54,21 +55,73 @@ class Model:
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-model = Model(17, 20, 3)
-model.model.summary()
+# model = Model((17, 20))
+# model.model.summary()
 
 save_path = "model/"
 plotHistoryPath = "modelHistory.json"
 
-train, validation = utils.image_dataset_from_directory(
-	'keptPokemon',
-	label_mode = 'categorical',
-	batch_size = 256,
-	image_size = (239, 239),
-	seed = 69,
-	validation_split = 0.15,
-	subset = 'both'
-)
+playerDataTypes = [
+	int(),
+	str(),
+	int(),
+	int(),
+	str(),
+	int(),
+	int(),
+	str(),
+	str(),
+	str(),
+	str(),
+	str(),
+	str(),
+	str(),
+	int(),
+	int(),
+	int(),
+	float(),
+	int(),
+	int(),
+	int(),
+	int(),
+	float(),
+	float(),
+	float(),
+	float(),
+	float(),
+	float(),
+	float(),
+	float(),
+	float(),
+	float(),
+	str()
+	]
+
+playerFiles = os.listdir("data/Lamar Jackson")
+trainFiles = []
+valFiles = []
+for f in playerFiles:
+	if f[:4] == "2023":
+		valFiles.append(f"data/Lamar Jackson/{f}")
+	else:
+		trainFiles.append(f"data/Lamar Jackson/{f}")
+
+train = data.experimental.CsvDataset(trainFiles, record_defaults=playerDataTypes)
+
+for row in train.take(2):
+  print(row[0].numpy())
+
+print(train)
+
+# train, validation = utils.image_dataset_from_directory(
+# 	'keptPokemon',
+# 	label_mode = 'categorical',
+# 	batch_size = 256,
+# 	image_size = (239, 239),
+# 	seed = 69,
+# 	validation_split = 0.15,
+# 	subset = 'both'
+# )
 
 train = train.cache().prefetch(buffer_size = data.AUTOTUNE)
 validation = validation.cache().prefetch(buffer_size = data.AUTOTUNE)
