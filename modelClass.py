@@ -43,7 +43,18 @@ class Model:
 
 		self.model.add(layers.Flatten())
 
-		self.model.add(layers.Dense(340, activation=activations.relu))
+		self.model.add(layers.Dense(459, activation=activations.relu))
+		self.model.add(layers.Dense(459, activation=activations.relu))
+
+		self.model.add(layers.Dense(256, activation=activations.relu))
+		self.model.add(layers.Dense(128, activation=activations.relu))
+		self.model.add(layers.Dense(64, activation=activations.relu))
+		self.model.add(layers.Dense(32, activation=activations.relu))
+		self.model.add(layers.Dense(16, activation=activations.relu))
+		self.model.add(layers.Dense(8, activation=activations.relu))
+		self.model.add(layers.Dense(4, activation=activations.relu))
+		self.model.add(layers.Dense(2, activation=activations.relu))
+		self.model.add(layers.Dense(1, activation=activations.relu))
 
 		self.optimizer = optimizers.Adam(learning_rate=0.00001)
 		self.loss = losses.CategoricalCrossentropy()
@@ -64,26 +75,23 @@ plotHistoryPath = "modelHistory.json"
 playerDataTypes = [
 	int(),
 	str(),
-	int(),
-	int(),
 	str(),
-	int(),
-	int(),
-	str(),
-	str(),
-	str(),
-	str(),
-	str(),
+	float(),
 	str(),
 	str(),
 	int(),
 	int(),
 	int(),
-	float(),
 	int(),
 	int(),
 	int(),
 	int(),
+	int(),
+	float(),
+	int(),
+	float(),
+	int(),
+	int(),
 	float(),
 	float(),
 	float(),
@@ -91,8 +99,11 @@ playerDataTypes = [
 	float(),
 	float(),
 	float(),
+	int(),
+	int(),
 	float(),
-	float(),
+	int(),
+	int(),
 	float(),
 	str()
 	]
@@ -105,6 +116,14 @@ for f in playerFiles:
 		valFiles.append(f"data/Lamar Jackson/{f}")
 	else:
 		trainFiles.append(f"data/Lamar Jackson/{f}")
+
+with open(trainFiles[0], 'r') as f:
+	i=0
+	for line in f:
+		for char in line:
+			if char == ",":
+				i += 1
+	print(i)
 
 train = data.experimental.CsvDataset(trainFiles, record_defaults=playerDataTypes)
 
