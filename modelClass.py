@@ -139,9 +139,10 @@ class Model:
 
 		self.model.add(layers.Flatten())
 
-		self.model.add(layers.Dense(459, activation=activations.relu))
-		self.model.add(layers.Dense(459, activation=activations.relu))
+		self.model.add(layers.Dense(544, activation=activations.relu))
+		self.model.add(layers.Dense(544, activation=activations.relu))
 
+		self.model.add(layers.Dense(512, activation=activations.relu))
 		self.model.add(layers.Dense(256, activation=activations.relu))
 		self.model.add(layers.Dense(128, activation=activations.relu))
 		self.model.add(layers.Dense(64, activation=activations.relu))
@@ -269,8 +270,8 @@ names = [
 # train = data.experimental.make_csv_dataset(trainFiles, 17, column_names=names, header=False)
 # validation = data.experimental.make_csv_dataset(valFiles, 17, column_names=names, header=False)
 
-# for row in train.take(2):
-#   print(row)
+for row in train.take(2):
+  print(row)
 
 # print(train)
 
