@@ -42,6 +42,8 @@ def datasetConfig(trainLst, valLst):
 	# allTrain = Dataset()
 	# allValid = Dataset()
 
+	trains = []
+	labels = []
 	with open(trainLst[0], 'r') as f:
 		for line in f:
 			dataLst = line.split(', ')
@@ -55,11 +57,10 @@ def datasetConfig(trainLst, valLst):
 		# trainDs = Dataset.from_tensor_slices(trainTf)
 		trainLabelsTf = [tf.convert_to_tensor(float(y), dtype=tf.float32)]
 		# trainLabelsDs = Dataset.from_tensor_slices(trainLabelsTf)
-		allTrain = []
 		for train, label in list(zip(trainTf, trainLabelsTf)):
-			allTrain.append([train, label])
+			trains.append(train)
+			labels.append(label)
 		# allTrain = Dataset.zip((trainDs, trainLabelsDs))
-		print(allTrain)
 	for filename in trainLst[1:]:
 		with open(filename, 'r') as f:
 			for line in f:
@@ -78,9 +79,11 @@ def datasetConfig(trainLst, valLst):
 		# print(train)
 		# tf.concat(allTrain, train)
 		for train, label in list(zip(trainTf, trainLabelsTf)):
-			allTrain.append([train, label])
-		allTrainDs = Dataset.from_tensor_slices(allTrain)
+			trains.append(train)
+			labels.append(label)
 
+	valids = []
+	valLabels = []
 	with open(valLst[0], 'r') as f:
 		for line in f:
 			dataLst = line.split(',')
@@ -91,13 +94,14 @@ def datasetConfig(trainLst, valLst):
 			else:
 				dataPts.append(float(dataLst[i]))
 	validTf = [tf.convert_to_tensor(dataPts)]
-	validDs = Dataset.from_tensor_slices(validTf)
+	# validDs = Dataset.from_tensor_slices(validTf)
 	validLabelsTf = [tf.convert_to_tensor(y, dtype=tf.float32)]
-	validLabelsDs = Dataset.from_tensor_slices(validLabelsTf)
-	allValid = Dataset.zip((validDs, validLabelsDs))
-	allValid = []
-	for val, label in (validTf, validLabelsTf):
-		allValid.append([val, label])
+	# validLabelsDs = Dataset.from_tensor_slices(validLabelsTf)
+	# allValid = Dataset.zip((validDs, validLabelsDs))
+	# allValid = []
+	for valid, label in list(zip(trainTf, trainLabelsTf)):
+			valids.append(valid)
+			valLabels.append(label)
 	for filename in valLst[1:]:
 		with open(filename, 'r') as f:
 			for line in f:
@@ -107,16 +111,25 @@ def datasetConfig(trainLst, valLst):
 				if i == 25:
 					y = float(dataLst[i])
 				else:
-					data.append(float(dataLst[i]))
+					dataPts.append(float(dataLst[i]))
 		validTf = [tf.convert_to_tensor(dataPts)]
-		validDs = Dataset.from_tensor_slices(validTf)
+		# validDs = Dataset.from_tensor_slices(validTf)
 		validLabelsTf = [tf.convert_to_tensor(y, dtype=tf.float32)]
-		validLabelsDs = Dataset.from_tensor_slices(validLabelsTf)
-		valid = Dataset.zip((validDs, validLabelsDs))
+		# validLabelsDs = Dataset.from_tensor_slices(validLabelsTf)
+		# valid = Dataset.zip((validDs, validLabelsDs))
 		# tf.concat(allValid, valid)
-		for val, label in (validTf, validLabelsTf):
-			allValid.append([val, label])
-		vallValidDs = Dataset.from_tensor_slices(allValid)
+		for valid, label in list(zip(trainTf, trainLabelsTf)):
+			valids.append(valid)
+			valLabels.append(label)
+
+	trainDs = Dataset.from_tensor_slices(trains)
+	labelsDs = Dataset.from_tensor_slices(labels)
+
+	valsDs = Dataset.from_tensor_slices(valids)
+	valLabelsDs = Dataset.from_tensor_slices(valLabels)
+
+	allTrainDs = Dataset.zip((trainDs, labelsDs))
+	allValidDs = Dataset.zip((valsDs, valLabelsDs))
 
 	return allTrainDs, allValidDs
 
@@ -149,8 +162,8 @@ class Model:
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-model = Model((17, 34))
-model.model.build((17, 34))
+model = Model((17, 32))
+model.model.build((17, 32))
 model.model.summary()
 
 save_path = "model/"
