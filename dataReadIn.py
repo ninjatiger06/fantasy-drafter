@@ -96,9 +96,7 @@ def main():
 							writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:len(fullScore)-5]) + ", "
 						else:
 							writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
-					elif j == 34:
-						pass
-					elif j == 36 or j == 37:
+					elif j == 34 or j == 36 or j == 37:
 						pass
 					elif j == 44:
 						writeStr += str(pos)
@@ -106,7 +104,10 @@ def main():
 						# print(combinedData.values.tolist()[0][j])
 						# print(str(combinedDataLst[i][j]) + ", ")
 						counter += 1
-						writeStr += str(combinedDataLst[i][j]) + ", "
+						if np.isnan(combinedDataLst[i][j]):
+							writeStr += str(0) + ", "
+						else:
+							writeStr += str(combinedDataLst[i][j]) + ", "
 				print(counter)
 				p.write(writeStr)
 		except FileNotFoundError:
@@ -150,7 +151,10 @@ def main():
 						# print(combinedData.values.tolist()[0][j])
 						# print(str(combinedDataLst[i][j]) + ", ")
 						counter += 1
-						writeStr += str(combinedDataLst[i][j]) + ", "
+						if np.isnan(combinedDataLst[i][j]):
+							writeStr += str(0) + ", "
+						else:
+							writeStr += str(combinedDataLst[i][j]) + ", "
 					# print(f"{j} | {combinedDataLst[i][j]} | {writeStr}")
 				p.write(writeStr)
 

@@ -44,83 +44,62 @@ def datasetConfig(trainLst, valLst):
 
 	trains = []
 	labels = []
-	with open(trainLst[0], 'r') as f:
-		for line in f:
-			dataLst = line.split(', ')
-		dataPts = []
-		for i in range(len(dataLst)):
-			if i == 25:
-				y = float(dataLst[i])
-			else:
-				dataPts.append(float(dataLst[i]))
-		trainTf = [tf.convert_to_tensor(dataPts)]
-		# trainDs = Dataset.from_tensor_slices(trainTf)
-		trainLabelsTf = [tf.convert_to_tensor(float(y), dtype=tf.float32)]
-		# trainLabelsDs = Dataset.from_tensor_slices(trainLabelsTf)
-		for train, label in list(zip(trainTf, trainLabelsTf)):
-			trains.append(train)
-			labels.append(label)
-		# allTrain = Dataset.zip((trainDs, trainLabelsDs))
-	for filename in trainLst[1:]:
-		with open(filename, 'r') as f:
-			for line in f:
-				dataLst = line.split(', ')
-			dataPts = []
-			for i in range(len(dataLst)):
-				if i == 25:
-					y = float(dataLst[i])
-				else:
-					dataPts.append(float(dataLst[i]))
-		trainTf = [tf.convert_to_tensor(dataPts)]
-		# trainDs = Dataset.from_tensor_slices(trainTf)
-		trainLabelsTf = [tf.convert_to_tensor(float(y), dtype=tf.float32)]
-		# trainLabelsDs = Dataset.from_tensor_slices(trainLabelsTf)
-		# train = Dataset.zip((trainDs, trainLabelsDs))
-		# print(train)
-		# tf.concat(allTrain, train)
-		for train, label in list(zip(trainTf, trainLabelsTf)):
-			trains.append(train)
-			labels.append(label)
+
+	first = 0
+	last = 16
+	while last <= len(trainLst) - 1:
+		tempTrains = []
+		tempLabels = []
+		print(first, last, "\n", trainLst[first], trainLst[last])
+		for filename in trainLst[first:last]:
+			with open(filename, 'r') as f:
+				for line in f:
+					dataLst = line.split(', ')
+				dataPts = []
+				for i in range(len(dataLst)):
+					if i == 25:
+						y = float(dataLst[i])
+					else:
+						dataPts.append(float(dataLst[i]))
+				trainTf = [tf.convert_to_tensor(dataPts)]
+				# trainDs = Dataset.from_tensor_slices(trainTf)
+				trainLabelsTf = [tf.convert_to_tensor(float(y), dtype=tf.float32)]
+				# trainLabelsDs = Dataset.from_tensor_slices(trainLabelsTf)
+				for train, label in list(zip(trainTf, trainLabelsTf)):
+					tempTrains.append(train)
+					tempLabels.append(label)
+		trains.append(tempTrains)
+		labels.append(tempLabels)
+		first += 1
+		last += 1
 
 	valids = []
 	valLabels = []
-	with open(valLst[0], 'r') as f:
-		for line in f:
-			dataLst = line.split(',')
-		dataPts = []
-		for i in range(len(dataLst)):
-			if i == 25:
-				y = float(dataLst[i])
-			else:
-				dataPts.append(float(dataLst[i]))
-	validTf = [tf.convert_to_tensor(dataPts)]
-	# validDs = Dataset.from_tensor_slices(validTf)
-	validLabelsTf = [tf.convert_to_tensor(y, dtype=tf.float32)]
-	# validLabelsDs = Dataset.from_tensor_slices(validLabelsTf)
-	# allValid = Dataset.zip((validDs, validLabelsDs))
-	# allValid = []
-	for valid, label in list(zip(trainTf, trainLabelsTf)):
-			valids.append(valid)
-			valLabels.append(label)
-	for filename in valLst[1:]:
-		with open(filename, 'r') as f:
-			for line in f:
-				dataLst = line.split(',')
-			dataPts = []
-			for i in range(len(dataLst)):
-				if i == 25:
-					y = float(dataLst[i])
-				else:
-					dataPts.append(float(dataLst[i]))
-		validTf = [tf.convert_to_tensor(dataPts)]
-		# validDs = Dataset.from_tensor_slices(validTf)
-		validLabelsTf = [tf.convert_to_tensor(y, dtype=tf.float32)]
-		# validLabelsDs = Dataset.from_tensor_slices(validLabelsTf)
-		# valid = Dataset.zip((validDs, validLabelsDs))
-		# tf.concat(allValid, valid)
-		for valid, label in list(zip(trainTf, trainLabelsTf)):
-			valids.append(valid)
-			valLabels.append(label)
+
+	first = 0
+	last = 16
+	while last <= len(valLst) - 1:
+		tempVals = []
+		tempValLabels = []
+		for filename in valLst[first:last]:
+			with open(filename, 'r') as f:
+				for line in f:
+					dataLst = line.split(', ')
+				dataPts = []
+				for i in range(len(dataLst)):
+					if i == 25:
+						y = float(dataLst[i])
+					else:
+						dataPts.append(float(dataLst[i]))
+				valTf = [tf.convert_to_tensor(dataPts)]
+				valLabelsTf = [tf.convert_to_tensor(float(y), dtype=tf.float32)]
+				for val, valLabel in list(zip(valTf, valLabelsTf)):
+					tempVals.append(val)
+					tempValLabels.append(valLabel)
+		valids.append(tempVals)
+		valLabels.append(tempValLabels)
+		first += 1
+		last += 1
 
 	trainDs = Dataset.from_tensor_slices(trains)
 	labelsDs = Dataset.from_tensor_slices(labels)
@@ -139,7 +118,7 @@ class Model:
 	def __init__(self, inputSize):
 		self.model = tf.keras.Sequential()
 
-		self.model.add(layers.Flatten())
+		# self.model.add(layers.Flatten())
 
 		self.model.add(layers.Dense(544, activation=activations.relu))
 		self.model.add(layers.Dense(544, activation=activations.relu))
@@ -165,52 +144,12 @@ class Model:
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-model = Model((17, 32))
-model.model.build((17, 32))
+model = Model((None, 16, 32))
+model.model.build((None, 16, 32))
 model.model.summary()
 
 save_path = "model/"
 plotHistoryPath = "modelHistory.json"
-
-# playerDataTypes = [
-# 	int(),
-# 	float(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	float(),
-# 	int(),
-# 	int(),
-# 	float(),
-# 	float(),
-# 	float(),
-# 	float(),
-# 	float(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	float(),
-# 	float(),
-# 	float(),
-# 	float(),
-# 	int(),
-# 	float(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	int(),
-# 	float(),
-# 	str()
-# 	]
 
 playerFiles = os.listdir("data/Lamar Jackson")
 trainFiles = []
@@ -222,15 +161,6 @@ for f in playerFiles:
 		trainFiles.append(f"data/Lamar Jackson/{f}")
 
 train, validation = datasetConfig(trainFiles, valFiles)
-
-# with open(trainFiles[0], 'r') as f:
-# 	c = 0
-# 	for line in f:
-# 		print(line)
-# 		for char in line:
-# 			if char == ",":
-# 				c+= 1
-# 	print(c)
 
 names = [
 	"week",
@@ -268,24 +198,9 @@ names = [
 	"Pos."
 ]
 
-# train = data.experimental.CsvDataset(trainFiles, record_defaults=playerDataTypes)
-# train = data.experimental.make_csv_dataset(trainFiles, 17, column_names=names, header=False)
-# validation = data.experimental.make_csv_dataset(valFiles, 17, column_names=names, header=False)
-
-for row in train.take(2):
+for row in train.take(1):
+  print(f"\n ROW: {len(row)}")
   print(row)
-
-# print(train)
-
-# train, validation = utils.image_dataset_from_directory(
-# 	'keptPokemon',
-# 	label_mode = 'categorical',
-# 	batch_size = 256,
-# 	image_size = (239, 239),
-# 	seed = 69,
-# 	validation_split = 0.15,
-# 	subset = 'both'
-# )
 
 train = train.cache().prefetch(buffer_size = data.AUTOTUNE)
 validation = validation.cache().prefetch(buffer_size = data.AUTOTUNE)
