@@ -71,28 +71,31 @@ def main():
 				writeStr = ""
 				print(playerName, week)
 				for j in range(8, len(combinedDataLst[i])):
-					print("\n", j, f"counter:{counter}")
+					# print("\n", j, f"counter:{counter}")
 					# if j >= 6 and j <= 7:
 					# 	pass
 					if j == 9:
 						pass
 					elif j == 10:
-						print(combinedData.values.tolist()[0][j])
-						print(age)
+						# print(combinedData.values.tolist()[0][j])
+						# print(age)
 						counter += 1
 						writeStr += f"{age}, "
 					elif j == 11:
-						print(combinedData.values.tolist()[0][j])
-						print(f"{teamKeys[teamName]}, {teamKeys[oppName]}, ")
+						# print(combinedData.values.tolist()[0][j])
+						# print(f"{teamKeys[teamName]}, {teamKeys[oppName]}, ")
 						counter += 2
 						writeStr += f"{teamKeys[teamName]}, {teamKeys[oppName]}, "
 					elif j > 11 and j <= 13:
 						pass
 					elif j == 14:
-						print(combinedData.values.tolist()[0][j])
-						print(str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", ")
+						# print(combinedData.values.tolist()[0][j])
+						# print(str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", ")
 						counter += 2
-						writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
+						if str(fullScore[len(fullScore)-5:]) == " (OT)":
+							writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:len(fullScore)-5]) + ", "
+						else:
+							writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
 					elif j == 34:
 						pass
 					elif j == 36 or j == 37:
@@ -100,8 +103,8 @@ def main():
 					elif j == 44:
 						writeStr += str(pos)
 					else:
-						print(combinedData.values.tolist()[0][j])
-						print(str(combinedDataLst[i][j]) + ", ")
+						# print(combinedData.values.tolist()[0][j])
+						# print(str(combinedDataLst[i][j]) + ", ")
 						counter += 1
 						writeStr += str(combinedDataLst[i][j]) + ", "
 				print(counter)
@@ -112,28 +115,31 @@ def main():
 				# writeStr = ""+= (str(dataPoint) + ", " for dataPoint in combinedDataLst[i])
 				writeStr = ""
 				for j in range(8, len(combinedDataLst[i])):
-					print("\n", j, f"counter:{counter}")
+					# print("\n", j, f"counter:{counter}")
 					# if j >= 6 and j <= 7:
 					# 	pass
 					if j == 9:
 						pass
 					elif j == 10:
-						print(combinedData.values.tolist()[0][j])
-						print(age)
+						# print(combinedData.values.tolist()[0][j])
+						# print(age)
 						counter += 1
 						writeStr += f"{age}, "
 					elif j == 11:
-						print(combinedData.values.tolist()[0][j])
-						print(f"{teamKeys[teamName]}, {teamKeys[oppName]}, ")
+						# print(combinedData.values.tolist()[0][j])
+						# print(f"{teamKeys[teamName]}, {teamKeys[oppName]}, ")
 						counter += 2
 						writeStr += f"{teamKeys[teamName]}, {teamKeys[oppName]}, "
 					elif j > 11 and j <= 13:
 						pass
 					elif j == 14:
-						print(combinedData.values.tolist()[0][j])
-						print(str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", ")
+						# print(combinedData.values.tolist()[0][j])
+						# print(str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", ")
 						counter += 2
-						writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
+						if str(fullScore[len(fullScore)-5:]) == " (OT)":
+							writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:len(fullScore)-5]) + ", "
+						else:
+							writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
 					elif j == 34:
 						pass
 					elif j == 36 or j == 37:
@@ -141,8 +147,8 @@ def main():
 					elif j == 44:
 						writeStr += str(pos)
 					else:
-						print(combinedData.values.tolist()[0][j])
-						print(str(combinedDataLst[i][j]) + ", ")
+						# print(combinedData.values.tolist()[0][j])
+						# print(str(combinedDataLst[i][j]) + ", ")
 						counter += 1
 						writeStr += str(combinedDataLst[i][j]) + ", "
 					# print(f"{j} | {combinedDataLst[i][j]} | {writeStr}")
