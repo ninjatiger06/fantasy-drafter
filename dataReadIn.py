@@ -23,6 +23,16 @@ def main():
 	with open("./teams.json", 'r') as teamJSON:
 			teamKeys = json.load(teamJSON)
 
+	posDict = {
+		"QB": 0,
+		"WR": 1,
+		"P": 2,
+		"TE": 3,
+		"DB": 4,
+		"RB": 5,
+		"LB": 6
+	}
+
 	combinedDataLst = combinedData.values.tolist()
 	combinedDataLst = combinedDataLst[1:]
 	FLAGGED = True
@@ -52,34 +62,46 @@ def main():
 		fullAge = combinedDataLst[i][10]
 		ageHypen = fullAge.find("-")
 		age = float(fullAge[:ageHypen]) + (float(fullAge[ageHypen+1:]) / 365.25)
+		pos = posDict[combinedDataLst[i][len(combinedDataLst[i])-1][:2]]
+
+		counter = 0
 
 		try:
 			with open(f"data/{playerName}/{year}_{week}.csv", 'w') as p:
 				writeStr = ""
-				counter = 0
+				print(playerName, week)
 				for j in range(8, len(combinedDataLst[i])):
+					print("\n", j, f"counter:{counter}")
 					# if j >= 6 and j <= 7:
 					# 	pass
 					if j == 9:
 						pass
 					elif j == 10:
-						print(type(combinedDataLst[i][j]))
+						print(combinedData.values.tolist()[0][j])
+						print(age)
 						counter += 1
 						writeStr += f"{age}, "
-					elif j >= 11 and j <= 13:
-						print(type(combinedDataLst[i][j]))
+					elif j == 11:
+						print(combinedData.values.tolist()[0][j])
+						print(f"{teamKeys[teamName]}, {teamKeys[oppName]}, ")
 						counter += 2
 						writeStr += f"{teamKeys[teamName]}, {teamKeys[oppName]}, "
+					elif j > 11 and j <= 13:
+						pass
 					elif j == 14:
-						print(type(combinedDataLst[i][j]))
+						print(combinedData.values.tolist()[0][j])
+						print(str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", ")
 						counter += 2
 						writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
 					elif j == 34:
 						pass
-					elif j >= 36 and j <= 37:
+					elif j == 36 or j == 37:
 						pass
+					elif j == 44:
+						writeStr += str(pos)
 					else:
-						print(type(combinedDataLst[i][j]))
+						print(combinedData.values.tolist()[0][j])
+						print(str(combinedDataLst[i][j]) + ", ")
 						counter += 1
 						writeStr += str(combinedDataLst[i][j]) + ", "
 				print(counter)
@@ -90,21 +112,38 @@ def main():
 				# writeStr = ""+= (str(dataPoint) + ", " for dataPoint in combinedDataLst[i])
 				writeStr = ""
 				for j in range(8, len(combinedDataLst[i])):
+					print("\n", j, f"counter:{counter}")
 					# if j >= 6 and j <= 7:
 					# 	pass
 					if j == 9:
 						pass
 					elif j == 10:
+						print(combinedData.values.tolist()[0][j])
+						print(age)
+						counter += 1
 						writeStr += f"{age}, "
-					elif j >= 11 and j <= 13:
+					elif j == 11:
+						print(combinedData.values.tolist()[0][j])
+						print(f"{teamKeys[teamName]}, {teamKeys[oppName]}, ")
+						counter += 2
 						writeStr += f"{teamKeys[teamName]}, {teamKeys[oppName]}, "
+					elif j > 11 and j <= 13:
+						pass
 					elif j == 14:
+						print(combinedData.values.tolist()[0][j])
+						print(str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", ")
+						counter += 2
 						writeStr += str(fullScore[2:hyphen]) + ", " + str(fullScore[hyphen+1:]) + ", "
 					elif j == 34:
 						pass
-					elif j >= 36 and j <= 37:
+					elif j == 36 or j == 37:
 						pass
+					elif j == 44:
+						writeStr += str(pos)
 					else:
+						print(combinedData.values.tolist()[0][j])
+						print(str(combinedDataLst[i][j]) + ", ")
+						counter += 1
 						writeStr += str(combinedDataLst[i][j]) + ", "
 					# print(f"{j} | {combinedDataLst[i][j]} | {writeStr}")
 				p.write(writeStr)
