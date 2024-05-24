@@ -129,7 +129,9 @@ def datasetConfig(trainLst, valLst):
 	valLabelsDs = Dataset.from_tensor_slices(valLabels)
 
 	allTrainDs = Dataset.zip((trainDs, labelsDs))
+	allTrainDs = allTrainDs.batch(256)
 	allValidDs = Dataset.zip((valsDs, valLabelsDs))
+	allValidDs = allValidDs.batch(256)
 
 	return allTrainDs, allValidDs
 
@@ -296,7 +298,7 @@ cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weigh
 history = model.model.fit(
 	train,
 	batch_size = 256,
-	epochs = 1,
+	epochs = 5,
 	verbose = 1,
 	validation_data = validation,
 	validation_batch_size = 32,
