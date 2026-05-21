@@ -18,9 +18,9 @@ def saveStuff(model, save_path, plotHistoryPath, history):
 	print(f"Saving training history to {plotHistoryPath}")
 
 	old_history = {
-		"accuracy": [],
+		"mae": [],
 		"loss": [],
-		"val_accuracy": [],
+		"val_mae": [],
 		"val_loss": [],
 	}
 	try:
@@ -30,9 +30,9 @@ def saveStuff(model, save_path, plotHistoryPath, history):
 		pass
 
 	if old_history is not None:
-		old_history["accuracy"] += history.history["accuracy"]
+		old_history["mae"] += history.history["mae"]
 		old_history["loss"] += history.history["loss"]
-		old_history["val_accuracy"] += history.history["val_accuracy"]
+		old_history["val_mae"] += history.history["val_mae"]
 		old_history["val_loss"] += history.history["val_loss"]
 
 	with open(plotHistoryPath, "w") as f:
@@ -135,11 +135,11 @@ class Model:
 		self.model.add(layers.Dense(1, activation=activations.relu))
 
 		self.optimizer = optimizers.Adam(learning_rate=0.00001)
-		self.loss = losses.CategoricalCrossentropy()
+		self.loss = losses.MeanSquaredError()
 		self.model.compile(
 			loss = self.loss,
 			optimizer = self.optimizer,
-			metrics = ['accuracy'],
+			metrics = ['mae'],
 		)
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
@@ -151,14 +151,14 @@ model.model.summary()
 save_path = "model/"
 plotHistoryPath = "modelHistory.json"
 
-playerFiles = os.listdir("data/Lamar Jackson")
+playerFiles = os.listdir("data/players/Lamar Jackson")
 trainFiles = []
 valFiles = []
 for f in playerFiles:
 	if f[:4] == "2023":
-		valFiles.append(f"data/Lamar Jackson/{f}")
+		valFiles.append(f"data/players/Lamar Jackson/{f}")
 	else:
-		trainFiles.append(f"data/Lamar Jackson/{f}")
+		trainFiles.append(f"data/players/Lamar Jackson/{f}")
 
 train, validation = datasetConfig(trainFiles, valFiles)
 
@@ -226,9 +226,9 @@ import json
 print(f"Saving training history to {plotHistoryPath}")
 
 old_history = {
-	"accuracy": [],
+	"mae": [],
 	"loss": [],
-	"val_accuracy": [],
+	"val_mae": [],
 	"val_loss": [],
 }
 try:
@@ -238,9 +238,9 @@ except (FileNotFoundError, json.decoder.JSONDecodeError):
 	pass
 
 if old_history is not None:
-	old_history["accuracy"] += history.history["accuracy"]
+	old_history["mae"] += history.history["mae"]
 	old_history["loss"] += history.history["loss"]
-	old_history["val_accuracy"] += history.history["val_accuracy"]
+	old_history["val_mae"] += history.history["val_mae"]
 	old_history["val_loss"] += history.history["val_loss"]
 
 with open(plotHistoryPath, "w") as f:
